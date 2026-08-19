@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#1468e8" />
+  <meta name="description" content="南京地铁站应急接驳点快速查询与百度地图导航" />
+  <title>地铁站应急接驳点选择</title>
+  <style>
+    :root{
+      --blue:#1468e8;--blue2:#3a86ff;--bg:#f3f7fc;--card:#fff;--text:#162033;
+      --muted:#6f7b90;--line:#e8eef7;--shadow:0 8px 24px rgba(26,78,145,.10);
+      --green:#19a974;--orange:#f59e0b;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:var(--text)}
+    body{padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+    button,a{font:inherit}
+    .app{max-width:620px;margin:0 auto;min-height:100vh}
+    .hero{background:linear-gradient(135deg,var(--blue),var(--blue2));padding:calc(22px + env(safe-area-inset-top)) 20px 24px;color:#fff;position:sticky;top:0;z-index:10;box-shadow:0 8px 22px rgba(20,104,232,.18)}
+    .topbar{display:flex;align-items:center;gap:10px;min-height:36px}
+    .back{display:none;border:0;background:rgba(255,255,255,.18);color:#fff;width:36px;height:36px;border-radius:12px;align-items:center;justify-content:center;font-size:21px;cursor:pointer}
+    .brand{font-size:20px;font-weight:800;letter-spacing:.5px;line-height:1.25}
+    .subtitle{margin-top:7px;font-size:13px;opacity:.88}
+    .crumb{margin-top:13px;font-size:12px;opacity:.92;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .content{padding:18px 16px 30px}
+    .section-title{font-size:14px;color:var(--muted);font-weight:700;margin:0 4px 12px}
+    .list{display:grid;gap:12px}
+    .card{width:100%;border:0;background:var(--card);border-radius:18px;text-decoration:none;padding:17px 18px;display:flex;align-items:center;gap:14px;text-align:left;box-shadow:var(--shadow);cursor:pointer;color:var(--text);transition:.15s transform,.15s box-shadow;position:relative}
+    .card:active{transform:scale(.985);box-shadow:0 4px 14px rgba(26,78,145,.10)}
+    .icon{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;flex:none;background:#eaf2ff;color:var(--blue);font-size:18px;font-weight:900}
+    .icon.line{background:#e9f8f2;color:var(--green)}
+    .icon.turn{background:#fff5df;color:var(--orange)}
+    .main{min-width:0;flex:1}
+    .name{font-size:16px;font-weight:800;line-height:1.4}
+    .desc{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5}
+    .arrow{color:#9aa7ba;font-size:24px;line-height:1}
+    .info{margin-top:16px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 15px;color:var(--muted);font-size:12px;line-height:1.7}
+    .map-btn{margin-top:9px;display:inline-flex;align-items:center;gap:6px;color:var(--blue);font-weight:800;font-size:13px}
+    .empty{padding:30px 16px;text-align:center;color:var(--muted);background:#fff;border-radius:18px}
+    .footer{text-align:center;color:#9ba8ba;font-size:11px;padding:3px 16px 24px}
+    .search{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--line);border-radius:15px;padding:11px 13px;margin-bottom:14px;box-shadow:0 4px 12px rgba(26,78,145,.05)}
+    .search input{width:100%;border:0;outline:0;font-size:14px;background:transparent;color:var(--text)}
+    .search span{color:#9aa7ba}
+    @media(min-width:621px){.app{padding-top:16px}.hero{border-radius:22px 22px 0 0;top:16px}.content{padding-left:22px;padding-right:22px}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="hero">
+      <div class="topbar">
+        <button class="back" id="backBtn" aria-label="返回">‹</button>
+        <div class="brand">地铁站应急接驳点选择</div>
+      </div>
+      <div class="subtitle" id="subtitle">应急接驳点位快速查询与导航</div>
+      <div class="crumb" id="crumb">首页</div>
+    </header>
+
+    <main class="content">
+      <div class="section-title" id="sectionTitle">请选择轨道交通线路</div>
+      <div id="searchWrap"></div>
+      <div class="list" id="list"></div>
+      <div id="extra"></div>
+    </main>
+    <div class="footer">演示版 · 数据来源：1号线接驳点信息表</div>
+  </div>
+
+<script>
+const DATA = {
+  id:'line1',
+  name:'轨道交通1号线',
+  color:'#19a974',
+  stations:[
+    {seq:1,name:'中国药科大学',turn:true,note:'—',phone:'51897663',dirs:[
+      {name:'往八卦洲大桥南方向',pass:null,turn:{name:'中国药科大学',url:'https://j.map.baidu.com/26/kJ1u'}},
+      {name:'往中国药科大学方向',pass:null,turn:null}
+    ]},
+    {seq:2,name:'南京交院',turn:false,note:'—',phone:'51897653',dirs:[
+      {name:'往八卦洲大桥南方向',pass:{name:'交通职业技术学院',url:'https://j.map.baidu.com/93/kQb'},turn:null},
+      {name:'往中国药科大学方向',pass:{name:'交通职业技术学院',url:'https://j.map.baidu.com/93/kQb'},turn:null}
+    ]},
+    {seq:3,name:'南医大江苏经贸学院',turn:true,note:'—',phone:'51897643',dirs:[
+      {name:'往八卦洲大桥南方向',pass:{name:'南京医科大学',url:'https://j.map.baidu.com/a9/fUy'},turn:{name:'南京医科大学',url:'https://j.map.baidu.com/a9/fUy'}},
+      {name:'往中国药科大学方向',pass:{name:'南京医科大学',url:'https://j.map.baidu.com/a9/fUy'},turn:{name:'南京医科大学',url:'https://j.map.baidu.com/a9/fUy'}}
+    ]},
+    {seq:4,name:'龙眠大道',turn:true,note:'—',phone:'51897633',dirs:[
+      {name:'往八卦洲大桥南方向',pass:{name:'南京义乌小商品城',url:'https://j.map.baidu.com/94/fWhM'},turn:{name:'南京义乌小商品城',url:'https://j.map.baidu.com/94/fWhM'}},
+      {name:'往中国药科大学方向',pass:{name:'南京义乌小商品城',url:'https://j.map.baidu.com/94/fWhM'},turn:{name:'南京义乌小商品城',url:'https://j.map.baidu.com/94/fWhM'}}
+    ]},
+    {seq:5,name:'天印大道',turn:false,note:'—',phone:'51897623',dirs:[
+      {name:'往八卦洲大桥南方向',pass:{name:'天印大道地铁站',url:'https://j.map.baidu.com/b2/HTK'},turn:null},
+      {name:'往中国药科大学方向',pass:{name:'天印大道地铁站',url:'https://j.map.baidu.com/b2/HTK'},turn:null}
+    ]},
+    {seq:6,name:'竹山路',turn:true,note:'—',phone:'51897613',dirs:[
+      {name:'往八卦洲大桥南方向',pass:{name:'竹山路地铁站',url:'https://j.map.baidu.com/b1/7UYi'},turn:{name:'竹山路地铁站',url:'https://j.map.baidu.com/b1/7UYi'}},
+      {name:'往中国药科大学方向',pass:{name:'竹山路地铁站',url:'https://j.map.baidu.com/b1/7UYi'},turn:{name:'竹山路地铁站',url:'https://j.map.baidu.com/b1/7UYi'}}
+    ]},
+    {seq:7,name:'小龙湾',turn:false,note:'乘客由地下通道过街',phone:'51897603',dirs:[
+      {name:'往八卦洲大桥南方向',pass:{name:'小龙湾地铁站',url:'https://j.map.baidu.com/19/vrK'},turn:null},
+      {name:'往中国药科大学方向',pass:{name:'小龙湾地铁站',url:'https://j.map.baidu.com/19/vrK'},turn:null}
+    ]},
+    {seq:8,name:'百家湖',turn:false,note:'道路单侧接驳，接驳车辆调头',phone:'51897573',dirs:[
+      {name:'往八卦洲大桥南方向',pass:{name:'百家湖',url:'https://j.map.baidu.com/d5/1tK'},turn:null},
+      {name:'往中国药科大学方向',pass:{name:'百家湖',url:'https://j.map.baidu.com/d5/1tK'},turn:null}
+    ]},
+    {seq:9,name:'胜太路',turn:false,note:'—',phone:'51897563',dirs:[
+      {name:'往八卦洲大桥南方向',pass:{name:'胜太路',url:'https://j.map.baidu.com/1f/fvK'},turn:null},
+      {name:'往中国药科大学方向',pass:{name:'胜太路',url:'https://j.map.baidu.com/1f/fvK'},turn:null}
+    ]},
+    {seq:10,name:'河定桥',turn:true,note:'—',phone:'51897553',dirs:[
+      {name:'往八卦洲大桥南方向',pass:{name:'河定桥南',url:'https://j.map.baidu.com/81/Mw1M'},turn:{name:'河定桥南',url:'https://j.map.baidu.com/81/Mw1M'}},
+      {name:'往中国药科大学方向',pass:{name:'河定桥南',url:'https://j.map.baidu.com/81/Mw1M'},turn:{name:'河定桥南',url:'https://j.map.baidu.com/81/Mw1M'}}
+    ]},
+    {seq:11,name:'双龙大道',turn:false,note:'—',phone:'51897543',dirs:[
+      {name:'往八卦洲大桥南方向',pass:{name:'岔路口',url:'https://j.map.baidu.com/04/Erm'},turn:null},
+      {name:'往中国药科大学方向',pass:{name:'岔路口',url:'https://j.map.baidu.com/04/Erm'},turn:null}
+    ]}
+  ]
+};
+
+let state={page:'lines',station:null,dir:null};
+const list=document.getElementById('list');
+const title=document.getElementById('sectionTitle');
+const crumb=document.getElementById('crumb');
+const back=document.getElementById('backBtn');
+const extra=document.getElementById('extra');
+const searchWrap=document.getElementById('searchWrap');
+
+function validDir(d){return !!(d.pass||d.turn)}
+function esc(s){return String(s??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+function card(icon,name,desc,onClick,cls=''){
+  const b=document.createElement('button'); b.className='card';
+  b.innerHTML=`<div class="icon ${cls}">${icon}</div><div class="main"><div class="name">${esc(name)}</div>${desc?`<div class="desc">${desc}</div>`:''}</div><div class="arrow">›</div>`;
+  b.onclick=onClick; return b;
+}
+function clear(){list.innerHTML='';extra.innerHTML='';searchWrap.innerHTML=''}
+function render(){
+  clear();
+  back.style.display=state.page==='lines'?'none':'inline-flex';
+  if(state.page==='lines'){
+    title.textContent='请选择轨道交通线路'; crumb.textContent='首页';
+    list.appendChild(card('1',DATA.name,`${DATA.stations.length} 个地铁站`,()=>{state.page='stations';render()},'line'));
+  }
+  if(state.page==='stations'){
+    title.textContent='请选择地铁站'; crumb.textContent=`首页  ›  ${DATA.name}`;
+    const sw=document.createElement('div');sw.className='search';sw.innerHTML='<span>⌕</span><input id="stationSearch" placeholder="搜索地铁站，例如：南京交院">';searchWrap.appendChild(sw);
+    const draw=(q='')=>{
+      list.innerHTML='';
+      const rows=DATA.stations.filter(s=>s.name.includes(q.trim()));
+      rows.forEach(s=>list.appendChild(card(String(s.seq),s.name,`联系电话：${s.phone}`,()=>{state.station=s;state.page='dirs';render()})));
+      if(!rows.length) list.innerHTML='<div class="empty">没有找到匹配的地铁站</div>';
+    };
+    draw();document.getElementById('stationSearch').addEventListener('input',e=>draw(e.target.value));
+  }
+  if(state.page==='dirs'){
+    const s=state.station;title.textContent='请选择接驳方向';crumb.textContent=`首页  ›  ${DATA.name}  ›  ${s.name}`;
+    s.dirs.filter(validDir).forEach((d,i)=>list.appendChild(card(i===0?'↑':'↓',d.name,`${d.pass?'有途经站':''}${d.pass&&d.turn?' · ':''}${d.turn?'有折返站':''}`,()=>{state.dir=d;state.page='points';render()})));
+    const parts=[];if(s.note&&s.note!=='—')parts.push(`<b>备注：</b>${esc(s.note)}`);parts.push(`<b>联系电话：</b>${esc(s.phone)}`);
+    extra.innerHTML=`<div class="info">${parts.join('<br>')}</div>`;
+  }
+  if(state.page==='points'){
+    const s=state.station,d=state.dir;title.textContent='请选择接驳点类型';crumb.textContent=`${DATA.name}  ›  ${s.name}  ›  ${d.name}`;
+    if(d.pass) list.appendChild(pointCard('途','途经站',d.pass));
+    if(d.turn) list.appendChild(pointCard('折','折返站',d.turn,true));
+  }
+}
+function pointCard(icon,type,p,isTurn=false){
+  if(p.url){
+    const a=document.createElement('a');
+    a.className='card';
+    a.href=p.url;
+    a.target='_blank';
+    a.rel='noopener noreferrer';
+    a.innerHTML=`<div class="icon ${isTurn?'turn':''}">${icon}</div><div class="main"><div class="name">${type} · ${esc(p.name)}</div><div class="desc">点击后打开百度地图</div><div class="map-btn">百度地图导航 ↗</div></div><div class="arrow">›</div>`;
+    return a;
+  }
+  const b=document.createElement('button');
+  b.className='card';
+  b.innerHTML=`<div class="icon ${isTurn?'turn':''}">${icon}</div><div class="main"><div class="name">${type} · ${esc(p.name)}</div><div class="desc">当前表格未填写地图链接</div></div><div class="arrow">›</div>`;
+  b.onclick=()=>alert('该点位当前没有填写百度地图链接。');
+  return b;
+}
+
+back.onclick=()=>{
+  if(state.page==='stations') state.page='lines';
+  else if(state.page==='dirs') state.page='stations';
+  else if(state.page==='points') state.page='dirs';
+  render();
+};
+render();
+</script>
+</body>
+</html>
