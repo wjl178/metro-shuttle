@@ -1,0 +1,49 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#125EE8"/>
+      <stop offset="1" stop-color="#39A5FF"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#FFFFFF" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.16"/>
+    </linearGradient>
+    <filter id="shadow" x="0" y="0" width="1200" height="630" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="18" stdDeviation="32" flood-color="#00388E" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" rx="0" fill="url(#bg)"/>
+  <circle cx="1080" cy="100" r="150" fill="white" fill-opacity="0.08"/>
+  <circle cx="980" cy="540" r="180" fill="white" fill-opacity="0.06"/>
+  <circle cx="130" cy="560" r="140" fill="white" fill-opacity="0.05"/>
+
+  <g filter="url(#shadow)">
+    <rect x="70" y="78" width="1060" height="474" rx="36" fill="url(#card)" stroke="rgba(255,255,255,0.18)"/>
+  </g>
+
+  <rect x="120" y="158" width="138" height="138" rx="34" fill="#FFFFFF" fill-opacity="0.22"/>
+  <rect x="150" y="183" width="78" height="88" rx="18" fill="white"/>
+  <rect x="165" y="200" width="48" height="30" rx="8" fill="#1E71F2"/>
+  <circle cx="175" cy="250" r="8" fill="#1E71F2"/>
+  <circle cx="203" cy="250" r="8" fill="#1E71F2"/>
+  <path d="M158 286H220" stroke="white" stroke-width="10" stroke-linecap="round"/>
+  <path d="M139 322C178 281 220 281 258 322" stroke="white" stroke-width="11" stroke-linecap="round"/>
+  <path d="M204 320L233 355" stroke="white" stroke-width="11" stroke-linecap="round"/>
+  <path d="M212 341C212 357.569 198.569 371 182 371C165.431 371 152 357.569 152 341C152 324.431 182 289 182 289C182 289 212 324.431 212 341Z" fill="#FFD34E"/>
+
+  <text x="305" y="222" font-family="'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="56" font-weight="700" fill="white">地铁站应急接驳点选择</text>
+  <text x="306" y="287" font-family="'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="28" font-weight="500" fill="white" fill-opacity="0.92">应急接驳点位快速查询与百度地图导航</text>
+
+  <rect x="307" y="335" width="218" height="54" rx="27" fill="white" fill-opacity="0.18"/>
+  <text x="337" y="371" font-family="'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="24" font-weight="600" fill="white">轨道交通 1 号线</text>
+
+  <rect x="550" y="335" width="160" height="54" rx="27" fill="white" fill-opacity="0.18"/>
+  <text x="583" y="371" font-family="'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="24" font-weight="600" fill="white">手机端适配</text>
+
+  <rect x="735" y="335" width="178" height="54" rx="27" fill="white" fill-opacity="0.18"/>
+  <text x="768" y="371" font-family="'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="24" font-weight="600" fill="white">一键打开地图</text>
+
+  <text x="120" y="472" font-family="'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="28" font-weight="500" fill="white" fill-opacity="0.96">线路 → 站点 → 方向 → 途经站 / 折返站 → 百度地图导航</text>
+  <text x="120" y="525" font-family="'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="21" font-weight="400" fill="white" fill-opacity="0.80">适用于微信打开与日常长期使用</text>
+</svg>
